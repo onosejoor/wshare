@@ -31,16 +31,18 @@ const features = [
 export default function Features() {
   return (
     <section className="sm:px-10 px-5 py-5">
-      <div className="flex gap-10 flex-wrap items-center">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-10 items-center">
         {features.map((feature, idx) => (
           <div
             key={idx}
-            className="bg-white p-6 rounded-xl shadow-sm border w-sm border-neutral/20"
+            className="bg-bg p-6 rounded-xl shadow-sm border w-fit border-neutral/20  dark:border-accent/20"
           >
             <div className="bg-accent/10 p-3 rounded-full w-12 h-12 flex items-center justify-center mb-4">
               {feature.icon}
             </div>
-            <h3 className="text-xl font-bold mb-2">{feature.title}</h3>
+            <h3 className="text-xl dark:text-muted font-bold mb-2">
+              {feature.title}
+            </h3>
             <p className="text-muted">{feature.description}</p>
           </div>
         ))}

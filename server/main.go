@@ -15,7 +15,7 @@ func main() {
 	router.Use(cors.Default())
 
 	router.GET("/file", controllers.HandleGet)
-
+	router.GET("/file/:id", controllers.HandleGetById)
 	router.POST("/file", controllers.HandlePost)
 
 	router.Run("localhost:8080")

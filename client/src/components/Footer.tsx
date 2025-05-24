@@ -9,7 +9,7 @@ export default function Footer() {
             <Img
               src={"/images/logo.svg"}
               alt="logo"
-              className="size-12.5 object-cover "
+              className="size-12.5 dark:invert object-cover "
             />
 
             <p className="text-muted mb-4 md:mb-0">
