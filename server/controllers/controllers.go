@@ -80,7 +80,6 @@ func HandleGetByKey(ctx *gin.Context, bucket *b2.Bucket) {
 }
 
 func HandlePost(ctx *gin.Context, bucket *b2.Bucket) {
-	startTotal := time.Now()
 	formData, err := ctx.MultipartForm()
 	if err != nil {
 		ctx.AbortWithStatusJSON(400, gin.H{
@@ -140,24 +139,19 @@ func HandlePost(ctx *gin.Context, bucket *b2.Bucket) {
 		}
 
 		log.Printf("Start uploading %s", file.Filename)
-		startUpload := time.Now()
 
-		written, err := io.Copy(writer, fileReader)
+		_, err = io.Copy(writer, fileReader)
 		if err != nil {
 			log.Printf("Failed to upload file: %v", err)
 			ctx.JSON(500, gin.H{"success": false, "message": "Failed to upload"})
 			return
 		}
 
-		log.Printf("Copied %d bytes in %v", written, time.Since(startUpload))
-
-		startClose := time.Now()
 		if err := writer.Close(); err != nil {
 			log.Printf("Failed to finalize upload: %v", err)
 			ctx.JSON(500, gin.H{"success": false, "message": "Failed to finalize upload"})
 			return
 		}
-		log.Printf("Finalized upload in %v", time.Since(startClose))
 
 	} else {
 		objectName = "archive_" + time.Now().Format("20060102-150405") + ".zip"
@@ -170,7 +164,6 @@ func HandlePost(ctx *gin.Context, bucket *b2.Bucket) {
 			obj.Delete(ctx)
 		}
 
-		startZip := time.Now()
 		zipWriter := zip.NewWriter(b2Writer)
 
 		for _, fileHeader := range files {
@@ -194,9 +187,6 @@ func HandlePost(ctx *gin.Context, bucket *b2.Bucket) {
 			file.Close()
 		}
 
-		log.Printf("Zipped files in %v", time.Since(startZip))
-
-		startClose := time.Now()
 		if err := zipWriter.Close(); err != nil {
 			log.Printf("Failed to close zipWriter: %v", err)
 			ctx.JSON(500, gin.H{"message": "Failed to finalize zip"})
@@ -208,7 +198,6 @@ func HandlePost(ctx *gin.Context, bucket *b2.Bucket) {
 			ctx.JSON(500, gin.H{"message": "Failed to finalize upload"})
 			return
 		}
-		log.Printf("Finalized zip upload in %v", time.Since(startClose))
 	}
 
 	newData := Url{FileName: objectName, Key: randId}
@@ -222,7 +211,6 @@ func HandlePost(ctx *gin.Context, bucket *b2.Bucket) {
 
 	cleanupFunc = nil
 
-	log.Printf("Finished total upload in %v", time.Since(startTotal))
 	ctx.JSON(http.StatusOK, gin.H{
 		"success":  true,
 		"message":  "Files uploaded successfully",
