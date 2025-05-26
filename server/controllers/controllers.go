@@ -2,11 +2,13 @@ package controllers
 
 import (
 	"archive/zip"
+	"context"
 	"io"
 	"log"
 	supabase "main/db"
 	"net/http"
 	"strings"
+	"sync"
 
 	"time"
 
@@ -211,7 +213,7 @@ func HandlePost(ctx *gin.Context, bucket *b2.Bucket) {
 
 	newData := Url{FileName: objectName, Key: randId}
 	if _, _, err = db.From("urls").Insert(newData, false, "", "", "").Execute(); err != nil {
-		ctx.JSON(http.StatusOK, gin.H{
+		ctx.JSON(500, gin.H{
 			"success": false,
 			"message": "Error inserting into DB: " + err.Error(),
 		})
@@ -226,4 +228,75 @@ func HandlePost(ctx *gin.Context, bucket *b2.Bucket) {
 		"key":      randId,
 		"fileName": objectName,
 	})
+}
+
+func HandleDelete(ctx *gin.Context, bucket *b2.Bucket) {
+	key, exists := ctx.Params.Get("key")
+	if !exists {
+		ctx.JSON(400, gin.H{
+			"success": false, "message": "No key param found",
+		})
+		return
+
+	}
+	db := supabase.GetClient()
+	var data Url
+
+	_, err := db.From("urls").Select("*", "", false).Single().Eq("key", key).ExecuteTo(&data)
+	if err != nil {
+		log.Println("error querying db: ", err)
+		if strings.Contains(err.Error(), "(or no) rows returned") {
+			ctx.JSON(404, gin.H{
+				"success": false, "message": "No data found with key: " + key,
+			})
+			return
+		}
+		ctx.JSON(500, gin.H{
+			"success": false, "message": err.Error(),
+		})
+		return
+	}
+
+	var wg sync.WaitGroup
+	errCh := make(chan error, 2)
+	obj := bucket.Object(data.FileName)
+
+	_, cancel := context.WithCancel(context.Background())
+	defer cancel()
+
+	wg.Add(2)
+
+	go func() {
+		defer wg.Done()
+		if _, _, err := db.From("urls").Delete("", "").Eq("key", key).Execute(); err != nil {
+			errCh <- err
+			cancel()
+		}
+	}()
+
+	go func() {
+		defer wg.Done()
+		if err := obj.Delete(ctx); err != nil {
+			errCh <- err
+			cancel()
+		}
+	}()
+
+	wg.Wait()
+	close(errCh)
+
+	// Check for any error
+	for err := range errCh {
+		if err != nil {
+			ctx.JSON(500, gin.H{
+				"success": false, "message": err.Error(),
+			})
+			return
+		}
+	}
+
+	ctx.JSON(200, gin.H{
+		"success": true, "message": "Files deleted successfully",
+	})
+
 }

@@ -49,6 +49,8 @@ func main() {
 		controllers.HandlePost(ctx, bucket)
 	})
 
+	router.DELETE("/file/:key", func(ctx *gin.Context) { controllers.HandleDelete(ctx, bucket) })
+
 	router.Run(":8080")
 }
 

@@ -114,6 +114,7 @@ export default function FileUploader() {
           setDownloadUrl(url);
           setItem({ key: key!, fileName });
         }
+        setUploadProgress(0);
         clearInterval(interval);
       } catch (err) {
         console.log("Error uploading files:", err);
@@ -123,6 +124,7 @@ export default function FileUploader() {
             err instanceof Error ? err.message : "Internal Error"
           }`
         );
+
         setUploadProgress(0);
         clearInterval(interval);
       }

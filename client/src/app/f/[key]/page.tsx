@@ -12,7 +12,7 @@ export default async function DownloadPage({ params }: Params) {
   const apiUrl = `${SERVER_URL}/file/${key}`;
 
   const getFileUrl = await fetch(apiUrl);
-  if (!getFileUrl.ok) {
+  if (!getFileUrl.ok && getFileUrl.status === 404) {
     return notFound();
   }
 

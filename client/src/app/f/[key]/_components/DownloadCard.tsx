@@ -8,9 +8,9 @@ type Data = {
 export default function DownloadCard({ data }: { data: Data }) {
   return (
     <div className="flex items-center justify-center my-10 p-6">
-      <div className="space-y-10 max-w-md mx-auto">
+      <div className="space-y-10 max-w-md w-full mx-auto">
         <div className="w-full rounded-md  shadow-2xl bg-primary/10 border border-primary backdrop-blur-sm hover:shadow-3xl">
-          <div className="p-8 !space-y-10">
+          <div className="p-5 sm:p-8 !space-y-10">
             <div className="flex items-center justify-center mb-6">
               <div className="relative">
                 <div className="w-20 h-20 *:text-white bg-gradient-to-br from-primary to-secondary rounded-2xl flex items-center justify-center shadow-lg transform rotate-3 hover:rotate-0 transition-transform duration-300">
