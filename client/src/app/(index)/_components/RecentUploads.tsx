@@ -1,5 +1,5 @@
 "use client";
-import { deleteItem, getItems } from "@/hooks/useLocalStorage";
+import { deleteIDItem } from "@/hooks/useIndexDB";
 import { getFileIcon } from "./FileCard";
 import { handleCopy } from "./utils";
 import { CopyIcon, ExternalLink, Trash2Icon } from "lucide-react";
@@ -8,6 +8,7 @@ import RecentUploadsLoader from "@/components/loaders/recent-posts";
 import Link from "next/link";
 import { deleteData } from "@/lib/actions/deleteFile";
 import toast from "react-hot-toast";
+import { getIDItems } from "@/hooks/useIndexDB";
 
 type Props = {
   key: string;
@@ -18,8 +19,12 @@ export default function RecentUploads() {
   const [data, setData] = useState<Props[] | null>(null);
 
   useEffect(() => {
-    const { data } = getItems();
-    setData(data);
+    async function fetchData() {
+      const { data } = await getIDItems();
+      setData(data);
+    }
+
+    fetchData();
   }, []);
 
   if (data === null) {
@@ -37,7 +42,7 @@ export default function RecentUploads() {
     toast[options](message);
 
     if (success) {
-      const { newData } = deleteItem(key);
+      const { newData } = await deleteIDItem(key);
       setData(newData);
     }
   }

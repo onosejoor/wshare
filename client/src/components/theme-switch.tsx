@@ -16,10 +16,6 @@ export default function ThemeSwtich() {
     return null;
   }
 
-  console.log(theme);
-  
-
-
   return (
     <button
       className="p-3 bg-primary/10 rounded-full"

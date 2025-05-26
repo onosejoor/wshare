@@ -7,7 +7,7 @@ import toast from "react-hot-toast";
 import FileCard from "./FileCard";
 import { checkFileSize } from "./utils";
 import { checkStats, CopyBtn, ProgressBar } from "./Comp";
-import { setItem } from "@/hooks/useLocalStorage";
+import { setIDItem } from "@/hooks/useIndexDB";
 
 type AxiosProps = {
   success: boolean;
@@ -112,7 +112,7 @@ export default function FileUploader() {
 
           clearStates();
           setDownloadUrl(url);
-          setItem({ key: key!, fileName });
+          await setIDItem({ key: key!, fileName });
         }
         setUploadProgress(0);
         clearInterval(interval);

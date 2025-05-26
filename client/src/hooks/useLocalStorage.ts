@@ -13,6 +13,7 @@ export function getItems() {
   return { data: [] };
 }
 
+// -- not useful anymore
 export function setItem(data: Props) {
   const items = JSON.parse(localStorage.getItem("upload_keys") || `[]`);
   const jsonString = JSON.stringify([...items, data]);
@@ -27,5 +28,10 @@ export function deleteItem(key: Props["key"]) {
   const jsonString = JSON.stringify(removeFileFromLS);
   localStorage.setItem("upload_keys", jsonString);
 
-  return {newData : removeFileFromLS};
+  return { newData: removeFileFromLS };
+}
+// --
+
+export function deleteAll() {
+  localStorage.removeItem("upload_keys");
 }
