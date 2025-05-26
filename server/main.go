@@ -5,6 +5,7 @@ import (
 	"log"
 	"main/controllers"
 	"os"
+	"time"
 
 	"github.com/Backblaze/blazer/b2"
 
@@ -28,7 +29,16 @@ func main() {
 	router := gin.Default()
 	router.SetTrustedProxies(nil)
 
-	router.Use(cors.Default())
+	router.Use(cors.New(cors.Config{
+		AllowOrigins:     []string{"https://wshare-ten.vercel.app"},
+		AllowHeaders:     []string{"Origin", "Content-Type", "Authorization"}, // Added common headers you might need
+		ExposeHeaders:    []string{"Content-Length"},
+		AllowCredentials: true,
+		MaxAge:           12 * time.Hour,
+	}))
+
+	router.GET("/cron-jobs", func(ctx *gin.Context) { controllers.HandleCronJob(ctx) })
+	router.GET("/supa-cron", func(ctx *gin.Context) { controllers.HandleSupabaseCronJob(ctx) })
 
 	router.GET("/file", controllers.HandleGet)
 	router.GET("/file/:key", func(ctx *gin.Context) {
