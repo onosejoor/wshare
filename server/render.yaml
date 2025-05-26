@@ -1,0 +1,7 @@
+services:
+  - type: web
+    name: wshare
+    dockerfilePath: Dockerfile
+    envVars:
+      - key: PORT
+        value: 8080

@@ -1,12 +1,12 @@
 "use client";
 
 import { useState, useCallback, FormEvent, useTransition } from "react";
-import { Upload, CheckCircle} from "lucide-react";
+import { Upload, CheckCircle } from "lucide-react";
 import axios from "axios";
 import toast from "react-hot-toast";
 import FileCard from "./FileCard";
 import { checkFileSize } from "./utils";
-import { CopyBtn } from "./Comp";
+import { checkStats, CopyBtn, ProgressBar } from "./Comp";
 import { setItem } from "@/hooks/useLocalStorage";
 
 type AxiosProps = {
@@ -22,28 +22,49 @@ export default function FileUploader() {
   const [downloadUrl, setDownloadUrl] = useState("");
   const [uploadProgress, setUploadProgress] = useState<number>(0);
 
-  const totalSize =
-    files.length > 0
-      ? files.map((file) => file.size).reduce((sum, acc) => sum + acc)
-      : 0;
+  const totalSize = files.reduce((sum, acc) => sum + acc.size, 0);
 
-  const addUniqueFiles = (incomingFiles: File[]) => {
-    setFiles((prev) => {
-      return [...prev, ...incomingFiles];
-    });
-  };
+  const MAX_TOTAL_SIZE = 100 * 1024 * 1024;
 
-  const handleDrop = useCallback((e: React.DragEvent) => {
-    e.preventDefault();
-    const droppedFiles = Array.from(e.dataTransfer.files);
-    const { files, large } = checkFileSize(droppedFiles);
+  const addUniqueFiles = useCallback(
+    (incomingFiles: File[]) => {
+      let currentTotalSize = files.reduce((sum, f) => sum + f.size, 0);
+      const newFiles: File[] = [];
 
-    if (large) {
-      toast.error("Some files exceed the 100MB limit and were skipped.");
-    }
+      for (const file of incomingFiles) {
+        if (currentTotalSize + file.size <= MAX_TOTAL_SIZE) {
+          if (
+            !files.some((p) => p.name === file.name && p.size === file.size)
+          ) {
+            newFiles.push(file);
+            currentTotalSize += file.size;
+          }
+        } else {
+          toast.error(`file ${file.name} was skipped due to total size limit`);
+        }
+      }
+      setFiles((prev) => {
+        return [...prev, ...newFiles];
+      });
+    },
+    [MAX_TOTAL_SIZE, files]
+  );
 
-    addUniqueFiles(files);
-  }, []);
+  const handleDrop = useCallback(
+    (e: React.DragEvent) => {
+      e.preventDefault();
+      if (pending) return;
+      const droppedFiles = Array.from(e.dataTransfer.files);
+      const { files, large } = checkFileSize(droppedFiles);
+
+      if (large) {
+        toast.error("Some files exceed the 100MB limit and were skipped.");
+      }
+
+      addUniqueFiles(files);
+    },
+    [pending, addUniqueFiles]
+  );
 
   const handleFileInput = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files) {
@@ -61,6 +82,12 @@ export default function FileUploader() {
     setFiles((prev) => prev.filter((_, i) => i !== index));
   };
 
+  const clearStates = () => {
+    setFiles([]);
+    setUploadProgress(0);
+    return;
+  };
+
   const uploadFiles = (e: FormEvent) => {
     e.preventDefault();
     const formData = new FormData();
@@ -71,29 +98,31 @@ export default function FileUploader() {
 
     startTransition(async () => {
       const interval = setInterval(() => {
-        setUploadProgress((prev) => (prev === 90 ? prev : prev + 10));
-      }, 800);
+        setUploadProgress((prev) => (prev === 90 ? prev : prev + 5));
+      }, 2000);
       try {
-        const { data } = await axios.post<AxiosProps>(
-          "http://localhost:8080/file",
-          formData
-        );
+        const { data } = await axios.post<AxiosProps>("/api/file", formData);
 
         const { success, message, key, fileName } = data;
         const option = success ? "success" : "error";
         toast[option](message);
 
         if (success) {
-          setFiles([]);
-          setDownloadUrl(`http://localhost:3000/${key!}`);
-          setUploadProgress(0);
-          setItem({key: key!, fileName})
+          const url = `${window.location.href}/f/${key!}`;
+
+          clearStates();
+          setDownloadUrl(url);
+          setItem({ key: key!, fileName });
         }
         clearInterval(interval);
       } catch (err) {
         console.log("Error uploading files:", err);
 
-        toast.error("Upload failed");
+        toast.error(
+          `Upload failed: ${
+            err instanceof Error ? err.message : "Internal Error"
+          }`
+        );
         setUploadProgress(0);
         clearInterval(interval);
       }
@@ -144,25 +173,11 @@ export default function FileUploader() {
             className="mt-6 w-full bg-primary text-bg py-3 px-6 rounded-lg font-medium flex items-center justify-center space-x-2 hover:opacity-90"
           >
             <CheckCircle size={20} />
-            {pending ? (
-              <span>
-                Uploading... {uploadProgress > 0 && `${uploadProgress}%`}
-              </span>
-            ) : (
-              <span>
-                Upload {files.length} file{files.length > 1 ? "s" : ""}{" "}
-                {`(${(totalSize / 1024 / 1024).toFixed(2)} mb)`}
-              </span>
-            )}
+            {checkStats(pending, files.length, totalSize, uploadProgress)}
           </button>
 
           {uploadProgress > 0 && pending && (
-            <div className="w-full bg-gray-200 rounded-full h-2.5 mt-2 overflow-hidden">
-              <div
-                className="bg-primary h-2.5 rounded-full transition-all duration-200"
-                style={{ width: `${uploadProgress}%` }}
-              ></div>
-            </div>
+            <ProgressBar width={uploadProgress} />
           )}
         </form>
 

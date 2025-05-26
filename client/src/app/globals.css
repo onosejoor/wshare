@@ -1,33 +1,30 @@
 @import "tailwindcss";
 @plugin "tailwindcss-animate";
 
-/* @custom-variant dark (&:where(.dark, .dark *)); */
+@custom-variant dark (&:where(.dark, .dark *));
 
 :root {
-  --background: #f8fafc; /* Soft off-white */
-  --foreground: #0f172a; /* Deep navy */
+  --background: #f8fafc;
+  --foreground: #0f172a;
   --bg: #ffffff;
 
-  --primary: #4361ee; /* Vivid blue */
-  --secondary: #7b2cbf; /* Rich purple */
-  --accent: #06d6a0; /* Vibrant teal */
-  --neutral: #e2e8f0; /* Light gray */
-  --muted: #475569; /* Slate gray */
+  --primary: #4361ee;
+  --secondary: #7b2cbf;
+  --accent: #06d6a0;
+  --neutral: #e2e8f0;
+  --muted: #475569;
 }
 
-/* Dark Mode overrides */
-@media (prefers-color-scheme: dark) {
-  :root {
+.dark {
     --bg: #1e293b;
-    --background: #0f172a; /* Deep navy */
-    --foreground: #f8fafc; /* Soft off-white */
+    --background: #0f172a;
+    --foreground: #f8fafc;
 
-    --primary: #748ffc; /* Slightly softened blue for dark mode */
-    --secondary: #9d4edd; /* Brighter purple for visibility */
-    --accent: #4ddbb0; /* Softer teal for dark bg */
-    --neutral: #1e293b; /* Dark slate gray for containers */
-    --muted: #94a3b8; /* Light slate for readable text */
-  }
+    --primary: #748ffc;
+    --secondary: #9d4edd;
+    --accent: #4ddbb0;
+    --neutral: #1e293b;
+    --muted: #94a3b8;
 }
 
 @theme inline {
