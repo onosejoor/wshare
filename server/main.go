@@ -39,7 +39,7 @@ func main() {
 		controllers.HandlePost(ctx, bucket)
 	})
 
-	router.Run("localhost:8080")
+	router.Run(":8080")
 }
 
 func connectToB2() (client *b2.Client, err error) {
