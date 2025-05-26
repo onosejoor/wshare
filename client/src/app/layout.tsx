@@ -19,16 +19,16 @@ export const metadata: Metadata = {
     title: "WShare - Effortless File Sharing",
     description:
       "Drag & drop uploads, secure links, and fast file transfers – all in one modern platform. Try WShare today.",
-    url: "https://wshare.example.com",
+    url: "https://wshare-ten.vercel.app",
     siteName: "WShare",
-    // images: [
-    //   {
-    //     url: "https://wshare.example.com/og-image.png", // replace with your actual OG image
-    //     width: 1200,
-    //     height: 630,
-    //     alt: "WShare - Secure and Fast File Sharing",
-    //   },
-    // ],
+    images: [
+      {
+        url: "/images/og-image.png",
+        width: 1200,
+        height: 630,
+        alt: "WShare - Secure and Fast File Sharing",
+      },
+    ],
     locale: "en_US",
     type: "website",
   },
@@ -39,7 +39,7 @@ export const metadata: Metadata = {
       "Experience modern file sharing with drag & drop uploads, protected links, and blazing speed.",
     site: "@DevText16",
     creator: "@DevText16",
-    // images: ["https://wshare.example.com/og-image.png"], // same image
+    images: ["/images/og-image.png"], 
   },
   keywords: [
     "file sharing",

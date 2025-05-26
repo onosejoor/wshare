@@ -16,7 +16,7 @@ export async function POST(req: NextRequest) {
 
   try {
     const { data } = await axios.post<AxiosProps>(apiUrl, formData, {
-      timeout: 2 * (1000 * 60),
+      timeout: 5 * (1000 * 60),
       timeoutErrorMessage: "Upload took longer than usual",
     });
 

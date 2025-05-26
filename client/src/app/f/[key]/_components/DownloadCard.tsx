@@ -24,7 +24,7 @@ export default function DownloadCard({ data }: { data: Data }) {
 
             <div className="text-center space-y-4 mb-8">
               <div className="space-y-2">
-                <h2 className="text-2xl font-bold text-muted leading-tight">
+                <h2 className="text-2xl font-bold truncate text-muted leading-tight">
                   {data.fileName}
                 </h2>
               </div>
