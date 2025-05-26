@@ -6,8 +6,8 @@ export default function Footer() {
   return (
     <footer className="mt-20 border-t border-neutral bg-background py-2 sm:px-10 px-5">
       <div>
-        <div className="flex flex-col md:flex-row justify-between items-center">
-          <div className="flex gap-5 items-center">
+        <div className="flex justify-between items-center">
+          <div className="flex sm:flex-row flex-col space-x-3 sm:gap-5 sm:items-center">
             <Link href={"/"}>
               <Img
                 src={"/images/logo.svg"}

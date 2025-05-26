@@ -91,7 +91,7 @@ const UploadCard = ({
           className="p-3 rounded-full grid place-content-center size-12 bg-white"
           onClick={() => deleteFile(file.key)}
         >
-          <Trash2Icon className="size-5 text-red-400" />
+          <Trash2Icon className="size-5 text-red-500" />
         </button>
       </div>
     </div>

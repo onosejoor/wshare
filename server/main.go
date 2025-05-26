@@ -40,7 +40,7 @@ func main() {
 	router.GET("/cron-jobs", func(ctx *gin.Context) { controllers.HandleCronJob(ctx) })
 	router.GET("/supa-cron", func(ctx *gin.Context) { controllers.HandleSupabaseCronJob(ctx) })
 
-	router.GET("/file", controllers.HandleGet)
+	// router.GET("/file", controllers.HandleGet)
 	router.GET("/file/:key", func(ctx *gin.Context) {
 		controllers.HandleGetByKey(ctx, bucket)
 	})
