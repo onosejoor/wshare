@@ -41,6 +41,15 @@ func HandleGet(ctx *gin.Context) {
 	})
 }
 
+func HandleCronJob(ctx *gin.Context) {
+	ctx.JSON(200, gin.H{"success": true})
+}
+
+func HandleSupabaseCronJob(ctx *gin.Context) {
+	supabase.GetClient().From("urls").Select("*", "", false).Single().Execute()
+	ctx.JSON(200, gin.H{"success": true})
+}
+
 func HandleGetByKey(ctx *gin.Context, bucket *b2.Bucket) {
 	key, exists := ctx.Params.Get("key")
 	if !exists {

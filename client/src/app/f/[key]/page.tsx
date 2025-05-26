@@ -5,7 +5,7 @@ type Params = {
   params: Promise<{ key: string }>;
 };
 
-export default async function name({ params }: Params) {
+export default async function DownloadPage({ params }: Params) {
   const key = (await params).key;
   const SERVER_URL = process.env.SERVER_URL!;
 
@@ -15,7 +15,7 @@ export default async function name({ params }: Params) {
   if (!getFileUrl.ok) {
     return notFound();
   }
-  
+
   const res = (await getFileUrl.json()) as {
     fileName: string;
     url: string;
