@@ -32,7 +32,7 @@ func main() {
 
 	router.Use(cors.New(cors.Config{
 		AllowOrigins:     []string{"https://wshare-ten.vercel.app"},
-		AllowHeaders:     []string{"Origin", "Content-Type", "Authorization"}, // Added common headers you might need
+		AllowHeaders:     []string{"Origin", "Content-Type", "Authorization"},
 		ExposeHeaders:    []string{"Content-Length"},
 		AllowCredentials: true,
 		MaxAge:           12 * time.Hour,

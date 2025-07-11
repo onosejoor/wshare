@@ -2,19 +2,12 @@
 
 import { useState, useCallback, FormEvent, useTransition } from "react";
 import { Upload, CheckCircle } from "lucide-react";
-import axios from "axios";
 import toast from "react-hot-toast";
 import FileCard from "./FileCard";
 import { checkFileSize } from "./utils";
 import { checkStats, CopyBtn, ProgressBar } from "./Comp";
 import { setIDItem } from "@/hooks/useIndexDB";
-
-type AxiosProps = {
-  success: boolean;
-  message: string;
-  key?: string;
-  fileName: string;
-};
+import { handleUploadFiles } from "@/lib/actions/uploadFile";
 
 export default function FileUploader() {
   const [files, setFiles] = useState<File[]>([]);
@@ -101,9 +94,9 @@ export default function FileUploader() {
         setUploadProgress((prev) => (prev === 90 ? prev : prev + 5));
       }, 2000);
       try {
-        const { data } = await axios.post<AxiosProps>("/api/file", formData);
-
-        const { success, message, key, fileName } = data;
+        const { success, message, key, fileName } = await handleUploadFiles(
+          formData
+        );
         const option = success ? "success" : "error";
         toast[option](message);
 
@@ -112,7 +105,7 @@ export default function FileUploader() {
 
           clearStates();
           setDownloadUrl(url);
-          await setIDItem({ key: key!, fileName });
+          await setIDItem({ key: key!, fileName: fileName! });
         }
         setUploadProgress(0);
         clearInterval(interval);
