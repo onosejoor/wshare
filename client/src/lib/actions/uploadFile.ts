@@ -8,7 +8,7 @@ type AxiosProps = {
 };
 
 export async function handleUploadFiles(formData: FormData) {
-  const SERVER_URL = process.env.SERVER_URL!;
+  const SERVER_URL = process.env.NEXT_PUBLIC_SERVER_URL!;
 
   const apiUrl = `${SERVER_URL}/file`;
 
