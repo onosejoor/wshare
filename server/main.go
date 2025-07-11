@@ -4,6 +4,7 @@ import (
 	"context"
 	"log"
 	"main/controllers"
+	"net/http"
 	"os"
 	"time"
 
@@ -50,6 +51,30 @@ func main() {
 	})
 
 	router.DELETE("/file/:key", func(ctx *gin.Context) { controllers.HandleDelete(ctx, bucket) })
+
+	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
+
+	go func() {
+		for {
+			select {
+			case <-time.After(10 * time.Minute):
+				_, err := http.Get(os.Getenv("ORIGIN") + "/cron-jobs")
+				if err != nil {
+					log.Printf("failed to fetch cron job: %v \n", err)
+				}
+
+			case <-time.After(24 * time.Hour):
+				_, err := http.Get(os.Getenv("ORIGIN") + "/supa-cron")
+				if err != nil {
+					log.Printf("failed to fetch supa cron job: %v \n", err)
+				}
+
+			case <-ctx.Done():
+				return
+			}
+		}
+	}()
 
 	router.Run(":8080")
 }
