@@ -35,7 +35,7 @@ func main() {
 	router.SetTrustedProxies(nil)
 
 	router.Use(cors.New(cors.Config{
-		AllowOrigins:     []string{"https://wshare-ten.vercel.app"},
+		AllowOrigins:     []string{"https://wshare-ten.vercel.app", "http://localhost:3000"},
 		AllowHeaders:     []string{"Origin", "Content-Type", "Authorization"},
 		ExposeHeaders:    []string{"Content-Length"},
 		AllowCredentials: true,

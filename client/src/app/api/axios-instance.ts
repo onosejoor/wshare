@@ -1,13 +1,18 @@
 import axios from "axios";
-import { BACKUP_SERVER_URL } from "@/lib/utils";
+import { BACKUP_SERVER_URL, SERVER_URL } from "@/lib/utils";
 
 export const axiosInstance = axios.create({
-  baseURL: "/api",
+  baseURL: SERVER_URL,
   headers: {
     "Content-Type": "application/json",
   },
   withCredentials: true,
 });
+
+// axiosInstance.interceptors.request.use((req) => {
+//   req.baseURL = SERVER_URL;
+//   return req;
+// });
 
 axiosInstance.interceptors.response.use(
   (response) => response,
@@ -16,8 +21,7 @@ axiosInstance.interceptors.response.use(
 
     if (
       error.response?.status === 503 &&
-      !originalRequest?._retriedWithBackup &&
-      originalRequest.url?.startsWith("/api")
+      !originalRequest?._retriedWithBackup
     ) {
       console.warn("Primary server unavailable (503). Trying backup server...");
       originalRequest._retriedWithBackup = true;

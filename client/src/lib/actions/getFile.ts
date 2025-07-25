@@ -1,6 +1,5 @@
 import { axiosInstance } from "@/app/api/axios-instance";
 import { isAxiosError } from "axios";
-import { SERVER_URL } from "../utils";
 
 interface FileResponse {
   fileName: string;
@@ -8,7 +7,7 @@ interface FileResponse {
 }
 
 export async function fetchFileUrl(key: string) {
-  const apiUrl = `${SERVER_URL}/file/${key}`;
+  const apiUrl = `/file/${key}`;
 
   try {
     const response = await axiosInstance.get<FileResponse>(apiUrl);

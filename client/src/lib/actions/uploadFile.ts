@@ -1,4 +1,3 @@
-import { SERVER_URL } from "../utils";
 import { axiosInstance } from "@/app/api/axios-instance";
 
 type AxiosProps = {
@@ -9,7 +8,7 @@ type AxiosProps = {
 };
 
 export async function handleUploadFiles(formData: FormData) {
-  const apiUrl = `${SERVER_URL}/file`;
+  const apiUrl = `/file`;
 
   try {
     const { data } = await axiosInstance.post<AxiosProps>(apiUrl, formData, {
