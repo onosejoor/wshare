@@ -20,6 +20,10 @@ func main() {
 	if err != nil {
 		log.Fatalln("error loading .env", err)
 	}
+	PORT := os.Getenv("PORT")
+	if PORT == "" {
+		PORT = "8080"
+	}
 
 	client, err := connectToB2()
 	if err != nil {
@@ -76,7 +80,7 @@ func main() {
 		}
 	}()
 
-	router.Run(":8080")
+	router.Run(":" + PORT)
 }
 
 func connectToB2() (client *b2.Client, err error) {
