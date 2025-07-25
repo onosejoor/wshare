@@ -1,14 +1,14 @@
 "use server";
 
-import axios from "axios";
+import { axiosInstance } from "@/app/api/axios-instance";
+import { SERVER_URL } from "../utils";
 
 export async function deleteData(key: string) {
-  const SERVER_URL = process.env.NEXT_PUBLIC_SERVER_URL;
-
   try {
-    const { data } = await axios.delete<{ success: boolean; message: string }>(
-      `${SERVER_URL}/file/${key}`
-    );
+    const { data } = await axiosInstance.delete<{
+      success: boolean;
+      message: string;
+    }>(`${SERVER_URL}/file/${key}`);
 
     return { success: data.success, message: data.message };
   } catch (error) {

@@ -1,4 +1,5 @@
-import axios from "axios";
+import { SERVER_URL } from "../utils";
+import { axiosInstance } from "@/app/api/axios-instance";
 
 type AxiosProps = {
   success: boolean;
@@ -8,12 +9,10 @@ type AxiosProps = {
 };
 
 export async function handleUploadFiles(formData: FormData) {
-  const SERVER_URL = process.env.NEXT_PUBLIC_SERVER_URL!;
-
   const apiUrl = `${SERVER_URL}/file`;
 
   try {
-    const { data } = await axios.post<AxiosProps>(apiUrl, formData, {
+    const { data } = await axiosInstance.post<AxiosProps>(apiUrl, formData, {
       timeout: 5 * (1000 * 60),
       timeoutErrorMessage: "Upload took longer than usual",
     });

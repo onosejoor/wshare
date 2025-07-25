@@ -1,5 +1,6 @@
-import axios from "axios";
+import { SERVER_URL } from "@/lib/utils";
 import { NextRequest, NextResponse } from "next/server";
+import { axiosInstance } from "../axios-instance";
 
 type AxiosProps = {
   success: boolean;
@@ -10,12 +11,11 @@ type AxiosProps = {
 
 export async function POST(req: NextRequest) {
   const formData = await req.formData();
-  const SERVER_URL = process.env.NEXT_PUBLIC_SERVER_URL!;
 
   const apiUrl = `${SERVER_URL}/file`;
 
   try {
-    const { data } = await axios.post<AxiosProps>(apiUrl, formData, {
+    const { data } = await axiosInstance.post<AxiosProps>(apiUrl, formData, {
       timeout: 5 * (1000 * 60),
       timeoutErrorMessage: "Upload took longer than usual",
     });
