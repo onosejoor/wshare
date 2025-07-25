@@ -1,5 +1,6 @@
 import { notFound } from "next/navigation";
 import DownloadCard from "./_components/DownloadCard";
+import { fetchFileUrl } from "@/lib/actions/getFile";
 
 type Params = {
   params: Promise<{ key: string }>;
@@ -7,19 +8,12 @@ type Params = {
 
 export default async function DownloadPage({ params }: Params) {
   const key = (await params).key;
-  const SERVER_URL = process.env.NEXT_PUBLIC_SERVER_URL!;
 
-  const apiUrl = `${SERVER_URL}/file/${key}`;
+  const { code, data } = await fetchFileUrl(key);
 
-  const getFileUrl = await fetch(apiUrl);
-  if (!getFileUrl.ok && getFileUrl.status === 404) {
-    return notFound();
+  if (code === 404) {
+    notFound();
   }
 
-  const res = (await getFileUrl.json()) as {
-    fileName: string;
-    url: string;
-  };
-
-  return <DownloadCard data={res} />;
+  return <DownloadCard data={data!} />;
 }
