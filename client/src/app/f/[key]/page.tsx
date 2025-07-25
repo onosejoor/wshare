@@ -7,7 +7,7 @@ type Params = {
 
 export default async function DownloadPage({ params }: Params) {
   const key = (await params).key;
-  const SERVER_URL = process.env.SERVER_URL!;
+  const SERVER_URL = process.env.NEXT_PUBLIC_SERVER_URL!;
 
   const apiUrl = `${SERVER_URL}/file/${key}`;
 
